@@ -2,7 +2,19 @@ const express = require('express')
 const router = express.Router()
 
 router.get('/api/calendar', (req, res) => {
-    res.json({ status: 'OK' })
+    res.json({
+        data: [
+            {
+                date: 'YYYY-MM-DD',
+                events: [
+                    {
+                        id: 123,
+                        title: 'string'
+                    }
+                ]
+            }
+        ]
+    })
 })
 
 module.exports = (app) => {
