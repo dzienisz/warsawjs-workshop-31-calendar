@@ -8,6 +8,7 @@ require('dotenv').config({
 const app = express()
 
 require('./web/routing/base.router')(app)
+require('./web/routing/calendar.router')(app)
 
 app.listen(process.env.PORT, () => {
     console.log(
