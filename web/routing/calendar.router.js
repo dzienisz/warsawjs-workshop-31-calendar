@@ -34,8 +34,9 @@ function buildCalendarWithDates (month) {
 }
 
 router.get('/api/calendar', (req, res) => {
+    const month = req.query.month
     res.json({
-        data: buildCalendarWithDates(12)
+        data: buildCalendarWithDates(month)
     })
 })
 
