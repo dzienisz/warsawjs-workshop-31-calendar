@@ -1,7 +1,7 @@
 const express = require('express')
 const supertest = require('supertest')
 
-const router = require('../web/routing/base.router')
+const router = require('../web/routing/calendar.router')
 
 let app = null
 
@@ -10,8 +10,8 @@ beforeEach(() => {
     router(app)
 })
 
-it('it should response on /', async () => {
+it('it should response on /api/calendar', async () => {
     const res = await supertest(app)
-        .get('/')
-    expect(res.body.status).toEqual('OK')
+        .get('/api/calendar')
+    expect(res.status).toBe(200)
 })
