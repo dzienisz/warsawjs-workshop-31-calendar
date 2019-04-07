@@ -71,3 +71,25 @@ it('should save event on POST /api/event', async () => {
     const list = await EventModel.find({ title: 'test-event-title' });
     expect(list.length).toEqual(1);
 })
+
+it('shoud delete event on DELETE /api/event', async () => {
+    const model = new EventModel(fake())
+    await model.save()
+
+    const id = model._id
+
+    const list = await EventModel.find({ title: 'test-event-title' });
+    expect(list.length).toEqual(1);
+
+    const res = await supertest(app)
+        .delete(`/api/event/${id}`)
+        .set('Accept', 'application/json')
+        .expect('Content-Type', /json/)
+        .expect(200)
+
+    expect(res.body.id).not.toBeNull();
+    expect(res.body.id).toEqual(jasmine.any(String));
+
+    const list2 = await EventModel.find({ title: 'test-event-title' });
+    expect(list2.length).toEqual(0);
+})
