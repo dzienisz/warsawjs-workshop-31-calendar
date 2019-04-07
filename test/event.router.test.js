@@ -1,13 +1,18 @@
 const express = require('express')
 const supertest = require('supertest')
 const Ajv = require('ajv');
-var bodyParser = require('body-parser');
-
+const bodyParser = require('body-parser')
 const router = require('../web/routing/event.router')
+const EventModel = require('../models/event-model')
+const { connect } = require('../db')
 
 let app = null
 
 const ajv = new Ajv();
+
+beforeAll(async () => {
+    await connect()
+})
 
 beforeEach(() => {
     app = express()
@@ -15,9 +20,20 @@ beforeEach(() => {
     router(app)
 })
 
+afterEach(async () => {
+    await EventModel.deleteMany({ title: 'test-event-title' });
+});
+
+const fake = () => ({
+    title: 'test-event-title',
+    description: 'test-event-description',
+    time: new Date().toISOString(),
+    notification: false
+});
+
 it('it should response on /api/event', async () => {
     const res = await supertest(app)
-        .get('/api/event')
+        .post('/api/event')
 
     expect(res.status).toBe(200)
 })
@@ -38,4 +54,20 @@ it('is my JSON valid', async () => {
     const valid = validate(res.body)
     expect(valid).toBeTruthy()
     expect(validate.errors).toBeNull()
+})
+
+it('should save event on POST /api/event', async () => {
+    const res = await supertest(app)
+        .post('/api/event')
+        .send(fake())
+        .set('Accept', 'application/json')
+        .expect('Content-Type', /json/)
+        .expect(200)
+
+
+    expect(res.body.id).not.toBeNull();
+    expect(res.body.id).toEqual(jasmine.any(String));
+
+    const list = await EventModel.find({ title: 'test-event-title' });
+    expect(list.length).toEqual(1);
 })

@@ -1,6 +1,7 @@
 const express = require('express')
 const path = require('path');
 const bodyParser = require('body-parser');
+const morgan = require('morgan')
 const { connect } = require('./db')
 
 require('dotenv').config({
@@ -11,6 +12,7 @@ const app = express()
 
 // Midlewares
 app.use(bodyParser.json())
+app.use(morgan('combined'))
 
 // Routing
 require('./web/routing/base.router')(app)
